@@ -1,20 +1,28 @@
 import CheckoutButton from '@/components/shared/CheckoutButton'
 import Collection from '@/components/shared/Collection'
 import { getEventById, getRelatedEventsByCategory } from '@/lib/actions/event.actions'
+import { getUserOrdersForEvent } from '@/lib/actions/user.actions'
 import { formatDateTime } from '@/lib/utils'
 import { SearchParamProps } from '@/types'
-import { Check, ExternalLink, Link, Link2, PhoneCall } from 'lucide-react'
+import { auth } from '@clerk/nextjs'
+import { ExternalLinkIcon } from 'lucide-react'
 import Image from 'next/image'
 import React from 'react'
 
 const EventDetails = async ({ params: { id }, searchParams }: SearchParamProps) => {
   const event = await getEventById(id)
+  const { sessionClaims } = auth();
+  const userId = sessionClaims?.userId as string;
+
+  const userOrders = await getUserOrdersForEvent(id, userId);
 
   const relatedEvents = await getRelatedEventsByCategory({
     categoryId: event.category._id,
     eventId: event._id,
     page: searchParams.page as string
   });
+
+
 
   return (
     <>
@@ -23,13 +31,21 @@ const EventDetails = async ({ params: { id }, searchParams }: SearchParamProps) 
 
       <section className='flex justify-center bg-primary-50 bg-dotted-pattern bg-contain'>
         <div className='grid grid-cols-1 md:grid-cols-2 2xl:max-w-7xl'>
-          <Image
-            src={event.imageUrl}
-            alt='Event Image'
-            width={1000}
-            height={1000}
-            className='h-full min-h-[300px] object-cover object-center'
-          />
+          {/* Event Image */}
+          <div className="relative">
+            <Image
+              src={event.imageUrl}
+              alt='Event Image'
+              width={1000}
+              height={1000}
+              className='h-full min-h-[300px] object-cover object-center'
+            />
+            {userOrders.length > 1 && (
+              <div className="absolute top-4 left-4 bg-primary/80 text-white px-2 py-1 rounded-full">
+                Tickets: {userOrders.length}
+              </div>
+            )}
+          </div>
           <div className='flex w-full flex-col gap-8 p-5 md:p-10'>
             <div className='flex flex-col gap-6'>
               <h2 className='h2-bold'>{event.title}</h2>
@@ -76,12 +92,14 @@ const EventDetails = async ({ params: { id }, searchParams }: SearchParamProps) 
             <div className='flex flex-col gap-2'>
               <p className='p-bold-20 text-grey-600'>Event Description:</p>
               <p className='p-medium-16 lg:p-regular-20'>{event.description}</p>
-              {/* TODO */}
-              {/* Decide which will work better */}
-              <a href={event.url} className='p-medium-16 lg:p-regular-18 truncate text-primary-500 underline' target='_blank'>
-                <Link className='p-medium-16 lg:p-regular-18 truncate text-primary-500 underline' href={event.url} />
-              </a>
-              <p className='p-medium-16 lg:p-regular-18 truncate text-primary-500 underline'>{event.url}</p>
+              <div className='flex gap-2'>
+                <p className='p-medium-16 lg:p-regular-18 truncate text-foreground no-underline'>{event.url}</p>
+                <a href={event.url} className='p-medium-16 lg:p-regular-18 truncate text-primary-500 underline' target='_blank'>
+                  <ExternalLinkIcon />
+                </a>
+
+              </div>
+
             </div>
           </div>
         </div>

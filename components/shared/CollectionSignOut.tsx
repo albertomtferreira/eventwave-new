@@ -1,7 +1,8 @@
 import React from 'react'
-import Card from './Card'
+
 import Pagination from './Pagination'
 import { IEvent } from '@/lib/database/models/event.model'
+import CardSignOut from './CardSignOut'
 
 
 type CollectionProps = {
@@ -15,7 +16,7 @@ type CollectionProps = {
   collectionType?: 'Events_Organized' | 'My_Tickets' | 'All_Events'
 }
 
-const Collection = async ({
+const CollectionSignOut = async ({
   data,
   emptyTitle,
   emptyStateSubtext,
@@ -46,7 +47,7 @@ const Collection = async ({
 
               return (
                 <li key={event._id} className="flex justify-center">
-                  <Card
+                  <CardSignOut
                     event={event}
                     hasOrderLink={hasOrderLink}
                     hidePrice={hidePrice}
@@ -70,4 +71,4 @@ const Collection = async ({
   )
 }
 
-export default Collection
+export default CollectionSignOut

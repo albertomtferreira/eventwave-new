@@ -16,6 +16,7 @@ export interface IEvent extends Document {
   organizer: { _id: string, firstName: string, lastName: string }
 }
 
+
 const EventSchema = new Schema({
   title: { type: String, required: true },
   description: { type: String },

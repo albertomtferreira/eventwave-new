@@ -6,12 +6,18 @@ import Link from 'next/link'
 import React from 'react'
 import { Button } from '../ui/button'
 import Checkout from './Checkout'
-// import Checkout from './Checkout'
+import { useEventPurchaseStatus } from '@/lib/hooks/useEventPurchaseStatus'
+
 
 const CheckoutButton = ({ event }: { event: IEvent }) => {
   const { user } = useUser();
   const userId = user?.publicMetadata.userId as string;
   const hasEventFinished = new Date(event.endDateTime) < new Date();
+  const { isPurchased, loading } = useEventPurchaseStatus(userId, event._id);
+
+  if (loading) {
+    return <p>Loading...</p>;
+  }
 
   return (
     <div className="flex items-center gap-3">
@@ -28,7 +34,7 @@ const CheckoutButton = ({ event }: { event: IEvent }) => {
           </SignedOut>
 
           <SignedIn>
-            <Checkout event={event} userId={userId} />
+            <Checkout event={event} userId={userId} isPurchased={isPurchased} />
           </SignedIn>
         </>
       )}

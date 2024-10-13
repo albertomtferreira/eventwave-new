@@ -77,3 +77,26 @@ export async function deleteUser(clerkId: string) {
     handleError(error)
   }
 }
+
+export async function getUserOrdersForEvent(eventId: string, userId: string) {
+  try {
+    await connectToDatabase()
+
+    if (!userId) {
+      throw new Error('User ID is required')
+    }
+
+    const orders = await Order.find({
+      event: eventId,
+      buyer: userId
+    }).populate('event')
+
+    if (!orders) {
+      return []
+    }
+
+    return JSON.parse(JSON.stringify(orders))
+  } catch (error) {
+    handleError(error)
+  }
+}

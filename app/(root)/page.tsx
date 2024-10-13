@@ -1,9 +1,12 @@
 import CategoryFilter from "@/components/shared/CategoryFilter";
 import Collection from "@/components/shared/Collection";
+import CollectionSignOut from "@/components/shared/CollectionSignOut";
+
 import Search from "@/components/shared/Search";
 import { Button } from "@/components/ui/button";
 import { getAllEvents } from "@/lib/actions/event.actions";
 import { SearchParamProps } from "@/types";
+import { SignedIn, SignedOut } from "@clerk/nextjs";
 
 import Image from "next/image";
 import Link from "next/link";
@@ -53,16 +56,33 @@ export default async function Home({ searchParams }: SearchParamProps) {
           <Search />
           <CategoryFilter />
         </div>
+        <SignedOut>
 
-        <Collection
-          data={events?.data}
-          emptyTitle="No Events Found"
-          emptyStateSubtext="Come back later"
-          collectionType="All_Events"
-          limit={3}
-          page={page}
-          totalPages={events?.totalPages}
-        />
+          <CollectionSignOut
+            data={events?.data}
+            emptyTitle="No Events Found"
+            emptyStateSubtext="Come back later"
+            collectionType="All_Events"
+            limit={3}
+            page={page}
+            totalPages={events?.totalPages}
+          />
+        </SignedOut>
+        <SignedIn>
+
+          <Collection
+            data={events?.data}
+            emptyTitle="No Events Found"
+            emptyStateSubtext="Come back later"
+            collectionType="All_Events"
+            limit={3}
+            page={page}
+            totalPages={events?.totalPages}
+          />
+        </SignedIn>
+
+
+
       </section>
     </>
   );

@@ -119,6 +119,25 @@ export async function getOrdersByEvent({ searchString, eventId }: GetOrdersByEve
   }
 }
 
+// GET ORDERS BY USER FOR CHECKOUT
+
+export async function getOrdersByUserForCheckout({ userId }: { userId: string }) {
+  try {
+    await connectToDatabase()
+
+    const orders = await Order.find({ buyer: userId }).populate({
+      path: 'event',
+      model: Event,
+      select: 'title',
+    })
+
+    return JSON.parse(JSON.stringify(orders))
+  } catch (error) {
+    handleError(error)
+  }
+}
+
+
 // GET ORDERS BY USER
 export async function getOrdersByUser({ userId, limit = 3, page }: GetOrdersByUserParams) {
   try {
