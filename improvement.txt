@@ -1,3 +1,4 @@
 copy event
 ability of copy/edit/delete when inside /event if owner
 hide price if purchase
+
